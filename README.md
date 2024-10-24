@@ -1,2 +1,2 @@
 # cipher-encoder-decoder
-An encoder-decoder using a personally-made cipher for coded messages
+An Python program for encoding-decoding Serbian using a personally-made cipher for coded messages
