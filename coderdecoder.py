@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
+import os
+import sys
 
 # Napravi prozor aplikacije
 window = tk.Tk()
@@ -26,7 +28,12 @@ min_height = 60
 window.minsize(min_width, min_height)
 
 # Postavi ikonu prozora
-window.iconbitmap('./Typewriter.ico')
+icon = "Typewriter.ico"
+if not hasattr(sys, "frozen"):
+    icon = os.path.join(os.path.dirname(__file__), icon)
+else:
+    icon = os.path.join(sys.prefix, icon)
+window.iconbitmap(default = icon)
 
 # Namesti kolone prozora za njegove elemente
 window.columnconfigure(0, weight=1)
