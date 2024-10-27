@@ -1,3 +1,5 @@
+#Za kompajliranje .exe pokreni u terminalu: pyinstaller coderdecoder.spec
+
 import tkinter as tk
 from tkinter import ttk
 import os
@@ -8,8 +10,8 @@ window = tk.Tk()
 window.title('Coder/Decoder')
 
 # Duzina i sirina prozora
-window_width = 800
-window_height = 500
+window_width = 400
+window_height = 150
 
 # Uzmi velicine trenutnog ekrana
 screen_width = window.winfo_screenwidth()
@@ -60,63 +62,64 @@ name_entry.focus()
 
 #Algoritam za kodiranje/dekodiranje
 def translate():
-    unos = name_entry.get()
-    #n = input('Prevod u srpski(srp) ili sifrovano(sif)? (za kraj razgovora=> "kraj") : ')
-    n = "sif"
+    unos = name_entry.get() #Recenica za prevod
 
     #Recnici sa siframa za koder/dekoder
     recnik_sifra = {'o':'1','e':'2','r':'3','m':'4','a':'5','n':'6','i':'7','k':'8','u':'9','s':'0',' ':'$','t':']','j':'[','d':';','l':')','v':'!','p':'|','z':'&','g':'%','b':'('}
     recnik_srpski = {'1':'o','2':'e','3':'r','4':'m','5':'a','6':'n','7':'i','8':'k','9':'u','0':'s','$':' ',']':'t','[':'j',';':'d',')':'l','!':'v','|':'p','&':'z','%':'g','(':'b'}
 
-    if n == "sif": #while n != "kraj":
-        d = ''
-        g1 = -1
-        if selected_mode.get() == '1':
-            n = unos
-            for i in range(0, len(n)):
-                p = n[i]
-                if p in recnik_sifra:
-                    x = recnik_sifra[p]
-                    d += x
-                else:
-                    d += p
-            d1 = list(d)
-            for g in range(0, (len(d1)//2), 2):
-                d1[g],d1[g1]=d1[g1],d1[g]
-                g1 -= 1
-            g1 =- 1
-            for g in range(0, (len(d1)//3)):
-                d1[g],d1[g1]=d1[g1],d1[g]
-                g1 -= 2
-            d = ''
-            for k in range(0, len(d1)):
-                w = d1[k]
-                d += w
-            window.output_label.config(text = d)
-        if selected_mode.get() == '2':
-            n = unos
-            for i in range(0,len(n)):
-                p = n[i]
-                if p in recnik_srpski:
-                    x = recnik_srpski[p]
-                    d += x
-                else:
-                    d += p
-            d1 = list(d)
-            for g in range(0,(len(d1)//3)):
-                d1[g],d1[g1]=d1[g1],d1[g]
-                g1 -= 2
-            g1 =- 1
-            for g in range(0,(len(d1)//2),2):
-                d1[g],d1[g1]=d1[g1],d1[g]
-                g1 -= 1
-            d = ''
-            for k in range(0,len(d1)):
-                w = d1[k]
-                d += w
-            window.output_label.config(text = d)
-        #n=input("Prevod u srpski ili sifrovano? : ")
-    #exit()
+    recenica = ''
+    i1 = -1 #Pomocni indeks za obrtanje slova
+    
+    if selected_mode.get() == '1': #Enkodiranje
+        #Prevod recenice u sifru
+        for i in range(0, len(unos)):
+            slovo = unos[i]
+            if slovo in recnik_sifra:
+                recenica += recnik_sifra[slovo]
+            else:
+                recenica += slovo
+        
+        #Obrtanje slova
+        recenica_pom = list(recenica)
+        for i in range(0, (len(recenica_pom) // 2), 2):
+            recenica_pom[i], recenica_pom[i1] = recenica_pom[i1], recenica_pom[i]
+            i1 -= 1
+        i1 =- 1
+        for i in range(0, (len(recenica_pom) // 3)):
+            recenica_pom[i], recenica_pom[i1] = recenica_pom[i1], recenica_pom[i]
+            i1 -= 2
+
+        #Vracanje recenice
+        recenica = ''
+        for i in range(0, len(recenica_pom)):
+            recenica += recenica_pom[i]
+        window.output_label.config(text = recenica) #Stampanje recenice
+        
+    if selected_mode.get() == '2': #Dekodiranje
+        #Prevod sifre u srpski
+        for i in range(0,len(unos)):
+            slovo = unos[i]
+            if slovo in recnik_srpski:
+                recenica += recnik_srpski[slovo]
+            else:
+                recenica += slovo
+
+        # Obrtanje slova
+        recenica_pom = list(recenica)
+        for i in range(0, (len(recenica_pom) // 3)):
+            recenica_pom[i],recenica_pom[i1]=recenica_pom[i1],recenica_pom[i]
+            i1 -= 2
+        i1 =- 1
+        for i in range(0, (len(recenica_pom) // 2), 2):
+            recenica_pom[i],recenica_pom[i1]=recenica_pom[i1],recenica_pom[i]
+            i1 -= 1
+
+        # Vracanje recenice
+        recenica = ''
+        for i in range(0,len(recenica_pom)):
+            recenica += recenica_pom[i]
+        window.output_label.config(text = recenica) #Stampanje recenice
 
 # Dugme za pokretanje
 submit_button = ttk.Button(window, text = 'Translate', command = translate)
