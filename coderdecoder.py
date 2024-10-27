@@ -4,14 +4,15 @@ import tkinter as tk
 from tkinter import ttk
 import os
 import sys
+import pyperclip
 
 # Napravi prozor aplikacije
 window = tk.Tk()
 window.title('Coder/Decoder')
 
 # Duzina i sirina prozora
-window_width = 400
-window_height = 150
+window_width = 300
+window_height = 90
 
 # Uzmi velicine trenutnog ekrana
 screen_width = window.winfo_screenwidth()
@@ -25,8 +26,8 @@ center_y = int(screen_height/2 - window_height / 2)
 window.geometry(f'{window_width}x{window_height}+{center_x}+{center_y}')
 
 # Fiksiraj minimalnu velicinu prozora
-min_width = 100
-min_height = 60
+min_width = 300
+min_height = 90
 window.minsize(min_width, min_height)
 
 # Postavi ikonu prozora
@@ -43,22 +44,22 @@ window.columnconfigure(1, weight=1)
 window.columnconfigure(2, weight=1)
 window.columnconfigure(3, weight=1)
 
-padding = {'padx': 5, 'pady': 5}
+padding = {'padx': 3, 'pady': 3}
 # Oznaka za textbox
 ttk.Label(window, text = 'Unos teksta:').grid(column = 0, row = 1, **padding)
-
-# Radio dugmici za izbor dekodera ili kodera
-selected_mode = tk.StringVar() #izabrano dugme
-r1 = ttk.Radiobutton(window, text='Encoding', value='1', variable = selected_mode)
-r2 = ttk.Radiobutton(window, text='Decoding', value='2', variable = selected_mode)
-selected_mode.set('1')  # Defaultno izabrano radio dugme (encoding)
-r1.grid(column = 0, row = 0, **padding)
-r2.grid(column = 1, row = 0, **padding)
 
 # Textbox za unos
 name_entry = ttk.Entry(window)
 name_entry.grid(column = 1, row = 1, **padding)
 name_entry.focus()
+
+# Radio dugmici za izbor dekodera ili kodera
+selected_mode = tk.StringVar() #izabrano dugme
+r1 = ttk.Radiobutton(window, text='Encoding', value='1', variable = selected_mode, command = lambda : name_entry.focus())
+r2 = ttk.Radiobutton(window, text='Decoding', value='2', variable = selected_mode, command = lambda : name_entry.focus())
+selected_mode.set('1')  # Defaultno izabrano radio dugme (encoding)
+r1.grid(column = 0, row = 0, **padding)
+r2.grid(column = 1, row = 0, **padding)
 
 #Algoritam za kodiranje/dekodiranje
 def translate():
@@ -128,6 +129,17 @@ submit_button.grid(column = 2, row = 1, **padding)
 # Izlaz prevoda
 window.output_label = ttk.Label(window)
 window.output_label.grid(column = 0, row = 3, columnspan = 3, **padding)
+
+def copy():
+    text = window.output_label.cget('text') #Fetchovanje teksta
+    pyperclip.copy(text) #Kopiranje teksta u clipboard
+    copy_label = ttk.Label(window, text='Copied!') #Potvrda uspesnog kopiranja
+    copy_label.grid(column=0, row=3, **padding)
+    window.after(2000, lambda: copy_label.config(text = '')) #Ocisti potvrdu nakon 2 sekunde
+
+# Dugme za kopiranje prevedene recenice
+copy_button = ttk.Button(window, text = 'Copy', command = copy)
+copy_button.grid(column = 2, row = 3, **padding)
 
 # Pokreni prozor
 window.mainloop()
